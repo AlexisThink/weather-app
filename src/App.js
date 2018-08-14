@@ -7,14 +7,7 @@ class App extends Component {
     super();
 
     this.state = {
-      cities: [
-        {id: 1,
-        name: 'France',
-        cords: {lat: 46.227638, lon: 2.213749}},
-        {id: 2,
-        name: 'Canada',
-        cords: {lat: 56.130366, lon: -106.346771}}
-        ],
+      cities: ['USA', 'Mexico', 'Colombia'],
       show: false,
 
       nameCity:'',
@@ -26,44 +19,34 @@ class App extends Component {
       wind:'',
     }
   }
+
+  //BUTTON TO ADD NEW CITY
   addNew = () => {
     this.setState({
       show: true
     })
   }
-
-  //FOR THIS API ENABLE CORS
-  getFranceWeather = (e) =>{
-    e.preventDefault();
-    
-    const apiURL = 'https://api.darksky.net/forecast/2f951a609b541b2049d0bf23f70143d3/46.227638,2.213749'
-    
-    request
-    .get(apiURL)
-    .then(response => console.log(response));    
-  }
-  getCanadaWeather = (e) =>{
-    e.preventDefault();
-    
-    const apiURL = 'https://api.darksky.net/forecast/2f951a609b541b2049d0bf23f70143d3/56.130366,-106.346771'
-    
-    request
-    .get(apiURL)
-    .then(response => console.log(response));   
-  }
-
-  //GET TEXT VALUE & COORDINATES
-  inputValue = (e) =>{
-    if(e.key === 'Enter'){
-
-      //CITY NAME
+  //GET TEXT VALUE
+   inputValue = (e) =>{
+    if(e.keyCode === 13){
+      //GET VALUE IN ENTER
+      this.state.cities.push(e.target.value)
+      //HIDE INPUT
       this.setState({
-        nameCity: e.target.value
+        show: false,
       })
+    }
+  }
+  //GET COORDINATES
+  getNameCity = (e) => {
+    var nameCity = e.target.innerText;
+    var API_GOOGLE = 'https://maps.googleapis.com/maps/api/geocode/json?address='+nameCity;
 
-    var cityInput = e.target.value;
-    var API_GOOGLE = 'https://maps.googleapis.com/maps/api/geocode/json?address='+cityInput;
-    
+    //SET NAME CITY SELECTED
+    this.setState({
+      nameCity: nameCity
+    })
+
     //GET COORDINATES
     request
     .get(API_GOOGLE)
@@ -72,8 +55,8 @@ class App extends Component {
       var lng = response.body.results[0].geometry.location.lng
       return [lat, lng]})
     .then(this.getClima)
-    }
   }
+ 
   //FIND THE WEATHER BASSED ON COORDINATES
   getClima = (coordenadas) =>{
     const baseDark = 'https://api.darksky.net/forecast/2f951a609b541b2049d0bf23f70143d3/'
@@ -88,20 +71,20 @@ class App extends Component {
     request
     .get(baseDark+coordenadas[0]+','+coordenadas[1])
     .then(function(response){
-      clima = response.body.daily.summary;
+      clima = response.body.currently.summary;
       humedad = response.body.currently.humidity;
       presion = response.body.currently.pressure;
       temperatura = response.body.currently.temperature;
       aire = response.body.currently.windGust;
 
-
+      console.log()
       return [date, clima, humedad, presion, temperatura, aire]
     })
       
       //SET THE TEXT OF SUMMARY
     .then(this.setMessage)
   }
-  //FUNCTION USED SET THE TEXT OF SUMMARY
+  //FUNCTION USED TO SET THE TEXT OF ALL VALUES
   setMessage = (valores) =>{
     this.setState({
       date:valores[0],
@@ -114,8 +97,6 @@ class App extends Component {
   }
 
   render(){
-
-    
     return (
       <div className="App">
         <header className='app__header'>
@@ -123,24 +104,30 @@ class App extends Component {
             <i class="fa fa-plus-circle">New city</i>
           </button>
         </header>
-      <div className='grid'>
-        <aside className='app__aside'>
-          <h1 className='app__title'>All countries</h1>
-          <a onClick={this.getFranceWeather}  href='#' className='app__country'>France</a>
-          <a onClick={this.getCanadaWeather}  href='#' className='app__country'>Canada</a>
-          {this.state.show && <input autoFocus ref={this.patito}  onKeyUp={this.inputValue} type='text' placeholder='Location' className='app__input' />}
-        </aside>
-        <section className='app__view'>
-        <h3>{this.state.nameCity}</h3>    
-        <h4>{this.state.date}</h4>
-        <h5>{this.state.summary}</h5>    
-        <hr></hr>
-        <p>Humidity: {this.state.humidity}</p>
-        <p>Pressure: {this.state.pressure}</p>
-        <p>Temperature: {this.state.temperature}</p>
-        <p>Wind: {this.state.wind}</p>
-        </section>
-      </div>
+        <div className='grid'>
+          <aside className='app__aside'>
+            <h1 className='app__title'>All countries</h1>
+
+            {
+              this.state.cities.map(city => {
+                return <a onClick={this.getNameCity} className="app__country">{city}</a>
+              })
+            }
+
+            {this.state.show && <input autoFocus onKeyUp={this.inputValue.bind(this)} type='text' placeholder='Location' className='app__input' />}
+          </aside>
+          
+          <section className='app__view'>
+            <h3>{this.state.nameCity}</h3>    
+            <h4>{this.state.date}</h4>
+            <h5>{this.state.summary}</h5>    
+            <hr></hr>
+            <p>Humidity: {this.state.humidity}</p>
+            <p>Pressure: {this.state.pressure}</p>
+            <p>Temperature: {this.state.temperature}</p>
+            <p>Wind: {this.state.wind}</p>
+          </section>
+        </div>
       </div>
     );
   }
