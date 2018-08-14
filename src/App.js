@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import request from 'superagent'; //npm install --save superagent
+import SingleDay from './Components/singleDay/SingleDay'
 import './App.css'
 
 class App extends Component {
@@ -89,10 +90,10 @@ class App extends Component {
     this.setState({
       date:valores[0],
       summary:valores[1],
-      humidity:valores[2],
-      pressure:valores[3],
-      temperature:valores[4],
-      wind:valores[5],
+      humidity:'Humidity: ' + valores[2],
+      pressure:'Pressure: ' + valores[3],
+      temperature:'Temperature: ' + valores[4],
+      wind:'Wind: ' + valores[5],
     })
   }
 
@@ -122,12 +123,14 @@ class App extends Component {
             <h4>{this.state.date}</h4>
             <h5>{this.state.summary}</h5>    
             <hr></hr>
-            <p>Humidity: {this.state.humidity}</p>
-            <p>Pressure: {this.state.pressure}</p>
-            <p>Temperature: {this.state.temperature}</p>
-            <p>Wind: {this.state.wind}</p>
+            <p>{this.state.humidity}</p>
+            <p>{this.state.pressure}</p>
+            <p>{this.state.temperature}</p>
+            <p>{this.state.wind}</p>
+            <SingleDay />
           </section>
         </div>
+
       </div>
     );
   }
