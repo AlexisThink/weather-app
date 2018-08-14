@@ -15,12 +15,11 @@ class App extends Component {
         name: 'Canada',
         cords: {lat: 56.130366, lon: -106.346771}}
         ],
-      show: false
+      show: false,
+      summary:''
     }
   }
-
   addNew = () =>{
-    console.log('Funciona el boton Add')
     this.setState({
       show: true
     })
@@ -36,21 +35,55 @@ class App extends Component {
     .get(apiURL)
     .then(response => console.log(response));    
   }
-
   getCanadaWeather = (e) =>{
     e.preventDefault();
     
     const apiURL = 'https://api.darksky.net/forecast/2f951a609b541b2049d0bf23f70143d3/56.130366,-106.346771'
+    const baseDark = 'https://api.darksky.net/forecast/2f951a609b541b2049d0bf23f70143d3/'
     
     request
     .get(apiURL)
     .then(response => console.log(response));   
   }
-  textFind = () =>{
-    console.log('Estas escribiendo')
+
+  getClima = (coordenadas) =>{
+    const baseDark = 'https://api.darksky.net/forecast/2f951a609b541b2049d0bf23f70143d3/'
+    var clima =''
+    request
+    .get(baseDark+coordenadas[0]+','+coordenadas[1])
+    .then(function(response){
+      clima = response.body.daily.summary;
+      return clima
+    })
+    .then(this.setMessage)
+
+
   }
 
-  render() {
+  setMessage = (clima) =>{
+    this.setState({
+      summary: clima
+    })
+  }
+  inputValue = (e) =>{
+    e.preventDefault();
+    var cityInput = e.currentTarget.value;
+    var API_GOOGLE = 'https://maps.googleapis.com/maps/api/geocode/json?address='+cityInput;
+    
+    request
+    .get(API_GOOGLE)
+    .then(function(response){
+      var lat = response.body.results[0].geometry.location.lat
+      var lng = response.body.results[0].geometry.location.lng
+  
+      console.log(lat);
+      console.log(lng);
+      return [lat, lng]
+    })
+    .then(this.getClima)
+  }
+
+  render(){
     return (
       <div className="App">
         <header className='app__header'>
@@ -63,10 +96,9 @@ class App extends Component {
           <h1 className='app__title'>All countries</h1>
           <a onClick={this.getFranceWeather}  href='#' className='app__country'>France</a>
           <a onClick={this.getCanadaWeather}  href='#' className='app__country'>Canada</a>
-
-          {this.state.show && <input autoFocus onKeyUp={this.textFind} type='text' placeholder='Location' className='app__input' />}
+          {this.state.show && <input autoFocus onKeyUp={this.inputValue} type='text' placeholder='Location' className='app__input' />}
         </aside>
-        <section className='app__view'>Text</section>
+        <section className='app__view'>{this.state.summary}</section>
       </div>
       </div>
     );
