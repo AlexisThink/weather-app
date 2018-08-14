@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import request from 'superagent'; //npm install --save superagent
 import SingleDay from './Components/singleDay/SingleDay'
+import request from 'superagent'; //npm install --save superagent
+import './Components/singleDay/singleDay.css'
 import './App.css'
 
 class App extends Component {
@@ -11,13 +12,12 @@ class App extends Component {
       cities: ['USA', 'Mexico', 'Colombia'],
       show: false,
 
-      nameCity:'',
-      date:'',
-      summary:'',
-      humidity:'',
-      pressure:'',
+      myArray:[],
+
+      icon:'',
       temperature:'',
-      wind:'',
+      presure:'',
+      wind:''
     }
   }
 
@@ -57,44 +57,38 @@ class App extends Component {
       return [lat, lng]})
     .then(this.getClima)
   }
+
  
   //FIND THE WEATHER BASSED ON COORDINATES
   getClima = (coordenadas) =>{
     const baseDark = 'https://api.darksky.net/forecast/2f951a609b541b2049d0bf23f70143d3/'
 
-    var date = new Date().toLocaleDateString();
-    var clima =''
-    var humedad =''
-    var presion = ''
-    var temperatura = ''
-    var aire = ''
-
     request
     .get(baseDark+coordenadas[0]+','+coordenadas[1])
     .then(function(response){
-      clima = response.body.currently.summary;
-      humedad = response.body.currently.humidity;
-      presion = response.body.currently.pressure;
-      temperatura = response.body.currently.temperature;
-      aire = response.body.currently.windGust;
+      var dias = response.body.daily.data;
+      var extractoDias = [];
 
-      console.log()
-      return [date, clima, humedad, presion, temperatura, aire]
+      dias.map(dia =>{
+
+        var icon = dia.icon;
+        var temperature = dia.temperatureLow;
+        var presure = dia.pressure;
+        var wind = dia.windSpeed
+
+        var currentObject = {icon: icon, temperature: temperature, presure: presure, wind: wind}
+        extractoDias.push(currentObject);
+      })
+      return extractoDias
     })
-      
-      //SET THE TEXT OF SUMMARY
-    .then(this.setMessage)
+    .then(this.settingValues)
   }
-  //FUNCTION USED TO SET THE TEXT OF ALL VALUES
-  setMessage = (valores) =>{
-    this.setState({
-      date:valores[0],
-      summary:valores[1],
-      humidity:'Humidity: ' + valores[2],
-      pressure:'Pressure: ' + valores[3],
-      temperature:'Temperature: ' + valores[4],
-      wind:'Wind: ' + valores[5],
-    })
+  settingValues = (array) =>{
+    
+      this.setState({
+        myArray: array
+      })
+   console.log(this.state.myArray) 
   }
 
   render(){
@@ -117,20 +111,14 @@ class App extends Component {
 
             {this.state.show && <input autoFocus onKeyUp={this.inputValue.bind(this)} type='text' placeholder='Location' className='app__input' />}
           </aside>
-          
-          <section className='app__view'>
-            <h3>{this.state.nameCity}</h3>    
-            <h4>{this.state.date}</h4>
-            <h5>{this.state.summary}</h5>    
-            <hr></hr>
-            <p>{this.state.humidity}</p>
-            <p>{this.state.pressure}</p>
-            <p>{this.state.temperature}</p>
-            <p>{this.state.wind}</p>
-            <SingleDay />
+          <section className='app__view container-view'>
+            {
+              this.state.myArray.map(dia =>{
+                return <SingleDay temperature={dia.temperature} presure={dia.presure} wind={dia.wind} />
+              })
+            }
           </section>
         </div>
-
       </div>
     );
   }

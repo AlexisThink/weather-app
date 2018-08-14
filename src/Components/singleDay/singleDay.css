@@ -2,6 +2,7 @@
     width: 150px;
     height: 250px;
 
+    margin: 0 10px;
     padding: 20px;
 
     display: flex;
@@ -11,3 +12,15 @@
     background: #eeeeee;
 }
 
+.single p{
+    margin: 0;
+}
+
+.single h6{
+    margin-bottom: 10px;
+}
+
+.container-view{
+    display: flex;
+    flex-direction: row;
+}
