@@ -1,6 +1,6 @@
 .single{
     width: 150px;
-    height: 250px;
+    height: 280px;
 
     margin: 0 10px;
     padding: 20px;
@@ -9,7 +9,9 @@
     flex-direction: column;
     align-items: center;
 
-    background: #eeeeee;
+    border-radius: 20px;
+    color: white;
+    background: linear-gradient( #74c7e6, #ff01d5);
 }
 
 .single p{

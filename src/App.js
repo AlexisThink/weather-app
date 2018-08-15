@@ -4,6 +4,22 @@ import request from 'superagent'; //npm install --save superagent
 import './Components/singleDay/singleDay.css'
 import './App.css'
 
+import clearDay from './images/clear-day.svg'
+import clearNight from './images/clear-night.svg'
+import rain from './images/rain.svg';
+import snow from './images/snow.svg';
+import sleet from './images/sleet.svg'
+import wind from './images/wind.svg';
+import fog from './images/fog.svg';
+import cloudy from './images/cloudy.svg'
+import partlyCloudy from './images/partly-cloudy-day.svg'
+import partlyCloudyNight from './images/partly-cloudy-night.svg';
+import hail from './images/hail.svg';
+import thunderstorm from './images/thunderstorm.svg';
+import tornado from './images/tornado.svg';
+
+
+
 class App extends Component {
   constructor(){
     super();
@@ -13,6 +29,7 @@ class App extends Component {
       show: false,
 
       myArray:[],
+
       tiempoTextos:
       ['clear-day',
         'clear-night',
@@ -27,22 +44,20 @@ class App extends Component {
         'hail',
         'thunderstorm',
         'tornado'],
-
       tiempoIcons:
-      ['../src/images/clear-day.svg',
-      './images/clear-night.svg',
-      'https://image.flaticon.com/icons/svg/427/427112.svg',
-      './images/snow.svg',
-      './images/sleet.svg',
-      './images/wind.svg',
-      './images/fog.svg',
-      './images/cloudy.svg',
-      './images/partly-cloudy-day.svg',
-      './images/partly-cloudy-night.svg',
-      './images/hail.svg',
-      './images/thunderstorm.svg',
-      './images/tornado.svg']
-
+      [clearDay,
+      clearNight,
+      rain,
+      snow,
+      sleet,
+      wind,
+      fog,
+      cloudy,
+      partlyCloudy,
+      partlyCloudyNight,
+      hail,
+      thunderstorm,
+      tornado],
     }
   }
 
@@ -92,8 +107,11 @@ class App extends Component {
     .get(baseDark+coordenadas[0]+','+coordenadas[1])
     .then(function(response){
       var dias = response.body.daily.data;
+      var horas = response.body.hourly.data;
       var extractoDias = [];
+      var extractoHoras = [];
 
+      console.log(response.body.hourly)
       dias.map(dia =>{
 
         var icon = dia.icon;
@@ -113,7 +131,6 @@ class App extends Component {
       this.setState({
         myArray: array
       })
-   console.log(this.state.myArray) 
   }
 
   render(){
@@ -146,7 +163,7 @@ class App extends Component {
                 if(dia.icon === this.state.tiempoTextos[1]){
                   iconSet = this.state.tiempoIcons[1]}
                 if(dia.icon === this.state.tiempoTextos[2]){
-                  iconSet = this.state.tiempoTextos[2]}
+                  iconSet = this.state.tiempoIcons[2]}
                 if(dia.icon === this.state.tiempoTextos[3]){
                   iconSet = this.state.tiempoIcons[3]}
                 if(dia.icon === this.state.tiempoTextos[4]){
@@ -167,8 +184,6 @@ class App extends Component {
                   iconSet = this.state.tiempoIcons[11]}
                 if(dia.icon === this.state.tiempoTextos[12]){
                   iconSet = this.state.tiempoIcons[12]}
-           
-                  console.log(iconSet)
 
                 return <SingleDay icon={iconSet} temperature={dia.temperature} presure={dia.presure} wind={dia.wind} />
               })
