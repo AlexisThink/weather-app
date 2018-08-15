@@ -6,7 +6,7 @@ class SingleDay extends React.Component{
       return (
         <div className="single">
             <div className="single__icon" >
-                <img herf={this.props.icon} alt="Today Weather"  />
+                <img src={this.props.icon} alt="Today Weather"/>
             </div>
             <h6 className="single__temperature">{this.props.temperature}</h6>
             <p>Temperture</p>

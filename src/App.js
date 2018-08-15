@@ -13,11 +13,36 @@ class App extends Component {
       show: false,
 
       myArray:[],
+      tiempoTextos:
+      ['clear-day',
+        'clear-night',
+        'rain',
+        'snow',
+        'sleet',
+        'wind',
+        'fog',
+        'cloudy',
+        'partly-cloudy-day',
+        'partly-cloudy-night',
+        'hail',
+        'thunderstorm',
+        'tornado'],
 
-      icon:'',
-      temperature:'',
-      presure:'',
-      wind:''
+      tiempoIcons:
+      ['../src/images/clear-day.svg',
+      './images/clear-night.svg',
+      'https://image.flaticon.com/icons/svg/427/427112.svg',
+      './images/snow.svg',
+      './images/sleet.svg',
+      './images/wind.svg',
+      './images/fog.svg',
+      './images/cloudy.svg',
+      './images/partly-cloudy-day.svg',
+      './images/partly-cloudy-night.svg',
+      './images/hail.svg',
+      './images/thunderstorm.svg',
+      './images/tornado.svg']
+
     }
   }
 
@@ -114,7 +139,38 @@ class App extends Component {
           <section className='app__view container-view'>
             {
               this.state.myArray.map(dia =>{
-                return <SingleDay temperature={dia.temperature} presure={dia.presure} wind={dia.wind} />
+
+                var iconSet = ''
+                if(dia.icon === this.state.tiempoTextos[0]){
+                  iconSet = this.state.tiempoIcons[0]}
+                if(dia.icon === this.state.tiempoTextos[1]){
+                  iconSet = this.state.tiempoIcons[1]}
+                if(dia.icon === this.state.tiempoTextos[2]){
+                  iconSet = this.state.tiempoTextos[2]}
+                if(dia.icon === this.state.tiempoTextos[3]){
+                  iconSet = this.state.tiempoIcons[3]}
+                if(dia.icon === this.state.tiempoTextos[4]){
+                  iconSet = this.state.tiempoIcons[4]}
+                if(dia.icon === this.state.tiempoTextos[5]){
+                  iconSet = this.state.tiempoIcons[5]}
+                if(dia.icon === this.state.tiempoTextos[6]){
+                  iconSet = this.state.tiempoIcons[6]}
+                if(dia.icon === this.state.tiempoTextos[7]){
+                  iconSet = this.state.tiempoIcons[7]}
+                if(dia.icon === this.state.tiempoTextos[8]){
+                  iconSet = this.state.tiempoIcons[8]}
+                if(dia.icon === this.state.tiempoTextos[9]){
+                  iconSet = this.state.tiempoIcons[9]}
+                if(dia.icon === this.state.tiempoTextos[10]){
+                  iconSet = this.state.tiempoIcons[10]}
+                if(dia.icon === this.state.tiempoTextos[11]){
+                  iconSet = this.state.tiempoIcons[11]}
+                if(dia.icon === this.state.tiempoTextos[12]){
+                  iconSet = this.state.tiempoIcons[12]}
+           
+                  console.log(iconSet)
+
+                return <SingleDay icon={iconSet} temperature={dia.temperature} presure={dia.presure} wind={dia.wind} />
               })
             }
           </section>
