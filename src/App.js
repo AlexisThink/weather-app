@@ -1,6 +1,7 @@
 //DEPENDENCIES
 import React, { Component } from 'react';
 import request from 'superagent'; //npm install --save superagent
+import {Switch, Route, Link} from 'react-router-dom';
 
 //COMPONENTS
 import SingleDay from './Components/singleDay/SingleDay';
@@ -204,8 +205,12 @@ class App extends Component {
       <div className="App">
         <header className='app__header'>
           <button onClick={this.addNew}  className='app__add'>
-            <i class="fa fa-plus-circle">New city</i>
+            <i className="fa fa-plus-circle">New city</i>
           </button>
+            <Link to="/home"> Home </Link>
+            <Link to="/about"> About </Link>
+            <Link to="/terms"> Terms </Link>
+
         </header>
         <div className='grid'>
           <aside className='app__aside'>
@@ -219,7 +224,14 @@ class App extends Component {
             {this.state.show && <input autoFocus onKeyUp={this.inputValue.bind(this)} type='text' placeholder='Location' className='app__input' />}
           </aside>
           <section className='app__view container-view'>
-            <h4>Weather for the next 7 days (Including Today)</h4>
+
+            <Switch>
+              <Route exact path='/home' component={Home} />
+              <Route exact path='/about' component={About} />
+              <Route exact path='/terms' component={Terms} />
+            </Switch>
+
+            {/* <h4>Weather for the next 7 days (Including Today)</h4>
             <div className="container-dias">
               {
                 this.state.myArray.map(dia =>{
@@ -234,11 +246,7 @@ class App extends Component {
                     return <SingleHour hour={new Date(hora.hour).toLocaleDateString()} temperature={hora.temperature} summary={hora.summary} windSpeed={hora.wind} presure={hora.presure} />
                 })
               } 
-            </div>
-          
-            <Home />
-            <About />
-            <Terms />  
+            </div> */}
 
           </section>
         </div>
