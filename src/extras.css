@@ -1,0 +1,14 @@
+.container-view{
+    display: flex;
+    flex-direction: column;
+}
+
+.container-dias{
+    display: flex;
+    flex-direction: row;
+}
+
+.container-horas{
+    display: flex;
+    flex-direction: row;
+}

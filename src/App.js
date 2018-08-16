@@ -1,9 +1,19 @@
+//DEPENDENCIES
 import React, { Component } from 'react';
-import SingleDay from './Components/singleDay/SingleDay'
 import request from 'superagent'; //npm install --save superagent
-import './Components/singleDay/singleDay.css'
-import './App.css'
 
+//COMPONENTS
+import SingleDay from './Components/singleDay/SingleDay';
+import SingleHour from './Components/singleHour/SingleHour';
+import About from './Components/About/About'
+import Home from './Components/Home/Home'
+import Terms from './Components/Terms/Terms'
+
+//CSS
+import './App.css'
+import './extras.css'
+
+//RESOURCES
 import clearDay from './images/clear-day.svg'
 import clearNight from './images/clear-night.svg'
 import rain from './images/rain.svg';
@@ -18,8 +28,6 @@ import hail from './images/hail.svg';
 import thunderstorm from './images/thunderstorm.svg';
 import tornado from './images/tornado.svg';
 
-
-
 class App extends Component {
   constructor(){
     super();
@@ -29,6 +37,7 @@ class App extends Component {
       show: false,
 
       myArray:[],
+      myArrayHours:[],
 
       tiempoTextos:
       ['clear-day',
@@ -57,7 +66,7 @@ class App extends Component {
       partlyCloudyNight,
       hail,
       thunderstorm,
-      tornado],
+      tornado]
     }
   }
 
@@ -106,31 +115,88 @@ class App extends Component {
     request
     .get(baseDark+coordenadas[0]+','+coordenadas[1])
     .then(function(response){
+      //WEATHER DAYS
       var dias = response.body.daily.data;
-      var horas = response.body.hourly.data;
       var extractoDias = [];
-      var extractoHoras = [];
-
-      console.log(response.body.hourly)
+      //ARRAY OF DAYS
       dias.map(dia =>{
 
         var icon = dia.icon;
         var temperature = dia.temperatureLow;
         var presure = dia.pressure;
-        var wind = dia.windSpeed
+        var wind = dia.windSpeed;
 
         var currentObject = {icon: icon, temperature: temperature, presure: presure, wind: wind}
         extractoDias.push(currentObject);
       })
-      return extractoDias
+
+      //WEATHER HOUR
+      var horas = response.body.hourly.data;
+      var contador = 0;
+      var extractoHoras = [];
+      //ARRAY OF HOURS
+
+      console.log(horas)
+
+
+      horas.map(hora =>{
+        if(contador <= 7){
+          contador += 1;
+
+          var hour = hora.time;
+          var temperature = hora.temperature;
+          var summary = hora.summary;
+          var windSpeed = hora.windSpeed;
+          var presure = hora.pressure;
+  
+          var currentHoras = {hour: hour, temperature: temperature, summary: summary, wind: windSpeed, presure: presure}
+          extractoHoras.push(currentHoras);
+        }
+      })
+
+      return [extractoDias, extractoHoras]
     })
     .then(this.settingValues)
   }
-  settingValues = (array) =>{
-    
+  settingValues = (arrays) =>{
       this.setState({
-        myArray: array
+        myArray: arrays[0],
+        myArrayHours: arrays[1]
       })
+  }
+
+  //SETTING ICON TO RENDER IN THE SINGLE DAY CARD
+  settingIcon = (diaIcon) =>{
+    var iconSet = ''
+
+    if(diaIcon === this.state.tiempoTextos[0]){
+      iconSet = this.state.tiempoIcons[0]}
+    if(diaIcon === this.state.tiempoTextos[1]){
+      iconSet = this.state.tiempoIcons[1]}
+    if(diaIcon === this.state.tiempoTextos[2]){
+      iconSet = this.state.tiempoIcons[2]}
+    if(diaIcon === this.state.tiempoTextos[3]){
+      iconSet = this.state.tiempoIcons[3]}
+    if(diaIcon === this.state.tiempoTextos[4]){
+      iconSet = this.state.tiempoIcons[4]}
+    if(diaIcon === this.state.tiempoTextos[5]){
+      iconSet = this.state.tiempoIcons[5]}
+    if(diaIcon === this.state.tiempoTextos[6]){
+      iconSet = this.state.tiempoIcons[6]}
+    if(diaIcon === this.state.tiempoTextos[7]){
+      iconSet = this.state.tiempoIcons[7]}
+    if(diaIcon === this.state.tiempoTextos[8]){
+      iconSet = this.state.tiempoIcons[8]}
+    if(diaIcon === this.state.tiempoTextos[9]){
+      iconSet = this.state.tiempoIcons[9]}
+    if(diaIcon === this.state.tiempoTextos[10]){
+      iconSet = this.state.tiempoIcons[10]}
+    if(diaIcon === this.state.tiempoTextos[11]){
+      iconSet = this.state.tiempoIcons[11]}
+    if(diaIcon === this.state.tiempoTextos[12]){
+      iconSet = this.state.tiempoIcons[12]}
+
+      return iconSet
   }
 
   render(){
@@ -144,7 +210,6 @@ class App extends Component {
         <div className='grid'>
           <aside className='app__aside'>
             <h1 className='app__title'>All countries</h1>
-
             {
               this.state.cities.map(city => {
                 return <a onClick={this.getNameCity} className="app__country">{city}</a>
@@ -154,40 +219,27 @@ class App extends Component {
             {this.state.show && <input autoFocus onKeyUp={this.inputValue.bind(this)} type='text' placeholder='Location' className='app__input' />}
           </aside>
           <section className='app__view container-view'>
-            {
-              this.state.myArray.map(dia =>{
+            <h4>Weather for the next 7 days (Including Today)</h4>
+            <div className="container-dias">
+              {
+                this.state.myArray.map(dia =>{
+                  return <SingleDay icon={this.settingIcon(dia.icon)} temperature={dia.temperature} presure={dia.presure} windSpeed={dia.wind} />
+                })
+              }
+            </div>
+            <h4>Weather per hour for Today</h4>
+            <div className="container-horas">
+              {
+                this.state.myArrayHours.map(hora =>{
+                    return <SingleHour hour={new Date(hora.hour).toLocaleDateString()} temperature={hora.temperature} summary={hora.summary} windSpeed={hora.wind} presure={hora.presure} />
+                })
+              } 
+            </div>
+          
+            <Home />
+            <About />
+            <Terms />  
 
-                var iconSet = ''
-                if(dia.icon === this.state.tiempoTextos[0]){
-                  iconSet = this.state.tiempoIcons[0]}
-                if(dia.icon === this.state.tiempoTextos[1]){
-                  iconSet = this.state.tiempoIcons[1]}
-                if(dia.icon === this.state.tiempoTextos[2]){
-                  iconSet = this.state.tiempoIcons[2]}
-                if(dia.icon === this.state.tiempoTextos[3]){
-                  iconSet = this.state.tiempoIcons[3]}
-                if(dia.icon === this.state.tiempoTextos[4]){
-                  iconSet = this.state.tiempoIcons[4]}
-                if(dia.icon === this.state.tiempoTextos[5]){
-                  iconSet = this.state.tiempoIcons[5]}
-                if(dia.icon === this.state.tiempoTextos[6]){
-                  iconSet = this.state.tiempoIcons[6]}
-                if(dia.icon === this.state.tiempoTextos[7]){
-                  iconSet = this.state.tiempoIcons[7]}
-                if(dia.icon === this.state.tiempoTextos[8]){
-                  iconSet = this.state.tiempoIcons[8]}
-                if(dia.icon === this.state.tiempoTextos[9]){
-                  iconSet = this.state.tiempoIcons[9]}
-                if(dia.icon === this.state.tiempoTextos[10]){
-                  iconSet = this.state.tiempoIcons[10]}
-                if(dia.icon === this.state.tiempoTextos[11]){
-                  iconSet = this.state.tiempoIcons[11]}
-                if(dia.icon === this.state.tiempoTextos[12]){
-                  iconSet = this.state.tiempoIcons[12]}
-
-                return <SingleDay icon={iconSet} temperature={dia.temperature} presure={dia.presure} wind={dia.wind} />
-              })
-            }
           </section>
         </div>
       </div>
